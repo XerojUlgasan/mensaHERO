@@ -1,4 +1,4 @@
-package com.mensahero.mensahero.DTO.UserDTO;
+package com.mensahero.mensahero.DTO.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

@@ -32,6 +32,7 @@ public class User {
     public String getEmail() {
         return email;
     }
-
-
+    public OffsetDateTime getCreated_at() {
+        return created_at;
+    }
 }
