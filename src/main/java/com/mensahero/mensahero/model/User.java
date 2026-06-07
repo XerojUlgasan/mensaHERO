@@ -19,6 +19,8 @@ public class User {
     private OffsetDateTime created_at;
     private String email;
 
+    ///////////////////////
+
     public void setId(UUID id) {
         this.id = id;
     }

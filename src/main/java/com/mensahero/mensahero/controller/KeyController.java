@@ -3,6 +3,7 @@ package com.mensahero.mensahero.controller;
 import com.mensahero.mensahero.DTO.keys.CreateKeys;
 import com.mensahero.mensahero.model.Key;
 import com.mensahero.mensahero.repository.KeyRepository;
+import com.mensahero.mensahero.service.KeyService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,16 +15,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/keys")
 public class KeyController {
-    KeyRepository keyRepository;
+    KeyService keyService;
 
-    public KeyController(KeyRepository keyRepository) {
-        this.keyRepository = keyRepository;
-    }
+    public KeyController(KeyService keyService) {this.keyService = keyService;}
 
     @GetMapping("/retrieve")
     public List<Key> getOwnedKeys(@RequestParam UUID ownerId){
         System.out.println("RETRIEVING OWNED KEYS BY: " + ownerId);
-        return keyRepository.findByOwnerId(ownerId);
+        return keyService.getKeys(ownerId);
     }
 
     @PostMapping("/create")
@@ -35,8 +34,9 @@ public class KeyController {
         key.setId(UUID.randomUUID());
         key.setKey(Key.generateApiKey());
         key.setOwner_id(createKeys.getOwnerId());
+        key.setName(createKeys.getName());
 
-        return keyRepository.save(key);
+        return keyService.createKey(key);
     }
 
     @GetMapping("/test")

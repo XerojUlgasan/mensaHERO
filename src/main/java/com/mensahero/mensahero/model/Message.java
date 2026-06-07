@@ -21,11 +21,24 @@ public class Message {
     @Column(insertable = false)
     private OffsetDateTime sent_at;
 
-    @Column(name = "api_id")
-    private UUID apiId;
     private String sender;
     private String receiver;
     private String message;
+
+    private String status;
+
+    @Column(name = "api_id")
+    private UUID apiId;
+
+    ///////////////////////
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public UUID getApi_id() {
         return apiId;

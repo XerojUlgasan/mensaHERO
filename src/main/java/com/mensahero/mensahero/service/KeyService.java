@@ -6,6 +6,7 @@ import com.mensahero.mensahero.repository.MessageRepository;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,7 +18,11 @@ public class KeyService {
         this.keyRepository = keyRepository;
     }
 
-    public Key createKey(@NotNull Key key) {
+    public List<Key> getKeys(UUID ownerId){
+        return keyRepository.findByOwnerId(ownerId);
+    }
+
+    public Key createKey(Key key){
         return keyRepository.save(key);
     }
 

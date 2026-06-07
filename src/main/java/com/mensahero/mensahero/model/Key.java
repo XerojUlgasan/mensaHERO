@@ -32,6 +32,29 @@ public class Key {
     @Column(name = "owner_id")
     private UUID ownerId;
 
+    @Column(insertable = false)
+    private OffsetDateTime last_used;
+
+    private String name;
+
+    ///////////////////////
+
+    public OffsetDateTime getLast_used() {
+        return last_used;
+    }
+
+    public void setLast_used(OffsetDateTime last_used) {
+        this.last_used = last_used;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getStatus() {
         return status;
     }
