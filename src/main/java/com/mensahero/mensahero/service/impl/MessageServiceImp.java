@@ -1,0 +1,94 @@
+package com.mensahero.mensahero.service.impl;
+
+import com.mensahero.mensahero.DTO.dashboard.DashboardCount;
+import com.mensahero.mensahero.DTO.dashboard.MessagesByKey;
+import com.mensahero.mensahero.DTO.dashboard.MessagesOverTime;
+import com.mensahero.mensahero.DTO.messages.CreateMessage;
+import com.mensahero.mensahero.Enums.DateFilters;
+import com.mensahero.mensahero.Enums.MessageStatus;
+import com.mensahero.mensahero.model.Message;
+import com.mensahero.mensahero.repository.MessageRepository;
+import com.mensahero.mensahero.service.MessageService;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class MessageServiceImp implements MessageService {
+    MessageRepository messageRepository;
+
+    public MessageServiceImp(MessageRepository messageRepository) {
+        this.messageRepository = messageRepository;
+    }
+
+    @Override
+    public List<Message> getRecipientsHistory(UUID ownerId,
+                                              UUID apiId,
+                                              DateFilters dateFilters,
+                                              int page,
+                                              int pageSize) {
+
+        return messageRepository.findByApiId(apiId, pageSize, (page-1)*pageSize);
+    }
+
+    @Override
+    public List<Message> getMessagesByRecipients(UUID ownerId,
+                                                 UUID apiId,
+                                                 DateFilters dateFilters,
+                                                 String recipient,
+                                                 MessageStatus messageStatus,
+                                                 int page,
+                                                 int pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
+
+        return messageRepository.findByApiIdAndReceiver(apiId, recipient, pageable);
+    }
+
+    @Override
+    public Message createMessage(UUID ownerId,
+                                 CreateMessage createMessage) {
+
+        return messageRepository.save(new Message(createMessage.getMessage(), createMessage.getTo(), createMessage.getFrom(), createMessage.getApiKey()));
+    }
+
+    /////////////////////////////////// HELPER FUNCTIONS FOR OTHER SERVICES
+
+    public DashboardCount getDashboardCount(){
+        return null;
+    } /// TOTAL COUNTERS
+
+    public List<MessagesOverTime> getMessagesOverTime(){
+        return null;
+    } /// GRAPHS
+
+    public List<MessagesByKey> getMessagesByKey(List<UUID> apiIds){   /// API KEY COUNTERS
+        List<Object[]> objs = messageRepository.countByApiIds(apiIds);
+
+        List<MessagesByKey> list = new ArrayList<>();
+
+        for (Object[] obj : objs) {
+            UUID apiId = (UUID) obj[0];
+            Long count = (Long) obj[1];
+
+            list.add(new MessagesByKey(apiId, null, count));
+        }
+
+        return list;
+    }
+
+    public List<Message> getRecentMessages(List<UUID> apiIds){  /// 5 RECENT MESSAGES
+        int limit = 5;
+
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("created_at").descending());
+
+        return messageRepository.findByApiIds(apiIds, pageable);
+    }
+
+    /////////////////////////////////// HELPER FUNCTIONS FOR OTHER SERVICES
+}

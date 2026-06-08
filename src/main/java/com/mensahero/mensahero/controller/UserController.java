@@ -1,6 +1,6 @@
 package com.mensahero.mensahero.controller;
 
-import com.mensahero.mensahero.service.UserService;
+import com.mensahero.mensahero.service.impl.UserServiceImp;
 import org.springframework.web.bind.annotation.*;
 
 //TODO:
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    UserService userService;
+    UserServiceImp userServiceImp;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserServiceImp userServiceImp) {
+        this.userServiceImp = userServiceImp;
     }
 
     @GetMapping("/test")

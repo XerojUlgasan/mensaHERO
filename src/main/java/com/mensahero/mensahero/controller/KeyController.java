@@ -1,12 +1,9 @@
 package com.mensahero.mensahero.controller;
 
-import com.mensahero.mensahero.DTO.keys.CreateKeys;
-import com.mensahero.mensahero.model.Key;
-import com.mensahero.mensahero.repository.KeyRepository;
-import com.mensahero.mensahero.service.KeyService;
+import com.mensahero.mensahero.DTO.keys.KeyDetails;
+import com.mensahero.mensahero.service.impl.KeyServiceImp;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 //TODO:
@@ -15,28 +12,28 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/keys")
 public class KeyController {
-    KeyService keyService;
+    KeyServiceImp keyServiceImp;
 
-    public KeyController(KeyService keyService) {this.keyService = keyService;}
+    public KeyController(KeyServiceImp keyServiceImp) {this.keyServiceImp = keyServiceImp;}
 
     @GetMapping("/retrieve")
-    public List<Key> getOwnedKeys(@RequestParam UUID ownerId){
-        System.out.println("RETRIEVING OWNED KEYS BY: " + ownerId);
-        return keyService.getKeys(ownerId);
+    public void getOwnedKeys(@RequestParam UUID ownerId){
+        return;
     }
 
     @PostMapping("/create")
-    public Key createNewKey(@RequestBody CreateKeys createKeys){
-        System.out.println("CREATE NEW KEY OWNED BY: " + createKeys.getOwnerId());
+    public void createNewKey(@RequestBody KeyDetails keyDetails){
+        return;
+    }
 
-        Key key = new Key();
+    @PatchMapping("/update")
+    public void updateKey(@RequestBody KeyDetails keyDetails){
+        return;
+    }
 
-        key.setId(UUID.randomUUID());
-        key.setKey(Key.generateApiKey());
-        key.setOwner_id(createKeys.getOwnerId());
-        key.setName(createKeys.getName());
-
-        return keyService.createKey(key);
+    @DeleteMapping("/delete")
+    public void deleteKey(@RequestParam UUID ownerId, @RequestParam UUID apiId){
+        return;
     }
 
     @GetMapping("/test")

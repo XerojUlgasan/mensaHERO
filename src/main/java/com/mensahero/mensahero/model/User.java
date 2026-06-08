@@ -15,6 +15,7 @@ public class User {
 
     @Id
     private UUID id;
+
     @Column(insertable = false, updatable = false)
     private OffsetDateTime created_at;
     private String email;

@@ -1,16 +1,18 @@
 package com.mensahero.mensahero.DTO.messages;
 
+import java.util.UUID;
+
 public class CreateMessage {
-    private String apiKey;
+    private UUID apiKey;
     private String from;
     private String to;
     private String message;
 
-    public String getApiKey() {
+    public UUID getApiKey() {
         return apiKey;
     }
 
-    public void setApiKey(String apiKey) {
+    public void setApiKey(UUID apiKey) {
         this.apiKey = apiKey;
     }
 

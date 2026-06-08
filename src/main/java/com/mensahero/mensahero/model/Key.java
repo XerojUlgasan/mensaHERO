@@ -39,6 +39,22 @@ public class Key {
 
     ///////////////////////
 
+
+    public static String generateApiKey() {
+
+        final SecureRandom secureRandom = new SecureRandom();
+
+        byte[] bytes = new byte[15]; // ~20 chars after encoding
+        secureRandom.nextBytes(bytes);
+
+        return Base64.getUrlEncoder()
+                .withoutPadding()
+                .encodeToString(bytes)
+                .substring(0, 20);
+    }
+
+    ///
+
     public OffsetDateTime getLast_used() {
         return last_used;
     }
@@ -61,19 +77,6 @@ public class Key {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public static String generateApiKey() {
-
-        final SecureRandom secureRandom = new SecureRandom();
-
-        byte[] bytes = new byte[15]; // ~20 chars after encoding
-        secureRandom.nextBytes(bytes);
-
-        return Base64.getUrlEncoder()
-                .withoutPadding()
-                .encodeToString(bytes)
-                .substring(0, 20);
     }
 
     public UUID getId() {

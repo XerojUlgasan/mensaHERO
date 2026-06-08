@@ -1,14 +1,16 @@
 package com.mensahero.mensahero.controller;
 
+import com.mensahero.mensahero.DTO.dashboard.MessagesByKey;
 import com.mensahero.mensahero.DTO.messages.CreateMessage;
 import com.mensahero.mensahero.model.Key;
 import com.mensahero.mensahero.model.Message;
-import com.mensahero.mensahero.service.KeyService;
-import com.mensahero.mensahero.service.MessageService;
+import com.mensahero.mensahero.service.impl.KeyServiceImp;
+import com.mensahero.mensahero.service.impl.MessageServiceImp;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,55 +23,39 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
-    MessageService messageService;
-    KeyService keyService;
+    MessageServiceImp messageServiceImp;
+    KeyServiceImp keyServiceImp;
 
-    public MessageController(MessageService messageService, KeyService keyService) {
-        this.messageService = messageService;
-        this.keyService = keyService;
+    public MessageController(MessageServiceImp messageServiceImp, KeyServiceImp keyServiceImp) {
+        this.messageServiceImp = messageServiceImp;
+        this.keyServiceImp = keyServiceImp;
     }
 
     @GetMapping("/test")
-    public String test(){
-        return "test";
+    public List<MessagesByKey> test(){
+        List<UUID> apiIds = new ArrayList<>();
+        apiIds.add(UUID.fromString("62429b98-c27e-4be6-81d5-7dccd52c33f5"));
+        apiIds.add(UUID.fromString("6566fbff-a6d8-4fad-b92b-4a3c83a69a04"));
+
+        return messageServiceImp.getMessagesByKey(apiIds);
     }
 
     @PostMapping("/create")
     public Message createMessage(@RequestBody CreateMessage createMessage){
-        Key key = keyService.checkKeyExistence(createMessage.getApiKey());
-
-        if(key == null){ // API KEY DOES NOT EXIST
-            System.out.println("API DOES NOT EXIST: " + createMessage.getApiKey());
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Invalid API key"
-            );
-        }
-
-        Message message = new Message();
-
-        message.setId(UUID.randomUUID());
-        message.setApi_id(key.getId()); // SHOULD BE VALIDATED FIRST IF API KEY EXISTS
-        message.setSender(createMessage.getFrom());
-        message.setReceiver(createMessage.getTo());
-        message.setMessage(createMessage.getMessage());
-
-        return messageService.createMessage(message);
+        return messageServiceImp.createMessage(null, createMessage);
     }
 
-    @GetMapping("/retrieve")
-    public List<Message> getAllMessagesByKey(@RequestParam String apiKey){
-        System.out.println("Retrieving all messages by key: " + apiKey);
-        Key key = keyService.checkKeyExistence(apiKey);
+    @GetMapping("/retrieveRecipients")
+    public List<Message> getAllRecipients(@RequestParam UUID apiId){
+        return messageServiceImp.getRecipientsHistory(null, apiId, null, 1, 10);
+    }
 
-        if(key == null){ // API KEY DOES NOT EXIST
-            System.out.println("API DOES NOT EXIST: " + apiKey);
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED,
-                    "Invalid API key"
-            );
-        }
+    @GetMapping("/retrieveMessagesByRecipient")
+    public List<Message> getAllMessages(@RequestParam UUID apiId,
+                                        @RequestParam String recipient,
+                                        @RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int pageSize){
 
-        return messageService.getMessagesByApiId(key.getId());
+        return messageServiceImp.getMessagesByRecipients(null, apiId, null, recipient, null, page, pageSize);
     }
 }
