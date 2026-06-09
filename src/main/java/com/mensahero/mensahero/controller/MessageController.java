@@ -1,7 +1,10 @@
 package com.mensahero.mensahero.controller;
 
+import com.mensahero.mensahero.DTO.dashboard.DashboardCount;
 import com.mensahero.mensahero.DTO.dashboard.MessagesByKey;
+import com.mensahero.mensahero.DTO.dashboard.MessagesOverTime;
 import com.mensahero.mensahero.DTO.messages.CreateMessage;
+import com.mensahero.mensahero.Enums.DateFilters;
 import com.mensahero.mensahero.model.Key;
 import com.mensahero.mensahero.model.Message;
 import com.mensahero.mensahero.service.impl.KeyServiceImp;
@@ -32,12 +35,12 @@ public class MessageController {
     }
 
     @GetMapping("/test")
-    public List<MessagesByKey> test(){
+    public List<MessagesOverTime> test(){
         List<UUID> apiIds = new ArrayList<>();
         apiIds.add(UUID.fromString("62429b98-c27e-4be6-81d5-7dccd52c33f5"));
         apiIds.add(UUID.fromString("6566fbff-a6d8-4fad-b92b-4a3c83a69a04"));
 
-        return messageServiceImp.getMessagesByKey(apiIds);
+        return messageServiceImp.getMessagesOverTime(apiIds, DateFilters.MONTHLY);
     }
 
     @PostMapping("/create")

@@ -4,9 +4,19 @@ import java.time.OffsetDateTime;
 
 public class MessagesOverTime {
     private OffsetDateTime date;
-    private int count;
+    private long count;
+
+    public MessagesOverTime() {
+    }
+
+    public MessagesOverTime(OffsetDateTime date, long count) {
+        this.date = date;
+        this.count = count;
+    }
 
     /// /////////
+    ///
+    ///
     public OffsetDateTime getDate() {
         return date;
     }
@@ -15,11 +25,11 @@ public class MessagesOverTime {
         this.date = date;
     }
 
-    public int getCount() {
+    public long getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(long count) {
         this.count = count;
     }
 }

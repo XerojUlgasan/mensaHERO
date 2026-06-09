@@ -7,6 +7,7 @@ import com.mensahero.mensahero.DTO.messages.CreateMessage;
 import com.mensahero.mensahero.Enums.DateFilters;
 import com.mensahero.mensahero.Enums.MessageStatus;
 import com.mensahero.mensahero.model.Message;
+import com.mensahero.mensahero.projections.messages.MessageCounterProjection;
 import com.mensahero.mensahero.repository.MessageRepository;
 import com.mensahero.mensahero.service.MessageService;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -59,13 +63,26 @@ public class MessageServiceImp implements MessageService {
 
     /////////////////////////////////// HELPER FUNCTIONS FOR OTHER SERVICES
 
-    public DashboardCount getDashboardCount(){
-        return null;
-    } /// TOTAL COUNTERS
+    public DashboardCount getDashboardCount(List<UUID> apiIds){ /// TOTAL COUNTERS
+        MessageCounterProjection counterProjection = messageRepository.getDashboardCounters(apiIds);
+        System.out.println("TOTAL MESSAGES: " + counterProjection.getTotalMessages());
+        System.out.println("FAILED MESSAGES: " + counterProjection.getFailedMessages());
 
-    public List<MessagesOverTime> getMessagesOverTime(){
-        return null;
-    } /// GRAPHS
+        return new DashboardCount(counterProjection.getTotalMessages(), counterProjection.getFailedMessages());
+    }
+
+    public List<MessagesOverTime> getMessagesOverTime(List<UUID> apiIds, DateFilters dateFilters){ /// GRAPHS
+        List<MessagesOverTime> result =
+                messageRepository.getMessagesOverTime(apiIds, dateFilters.name())
+                        .stream()
+                        .map(r -> new MessagesOverTime(
+                                ((Instant) r[0]).atOffset(ZoneOffset.UTC),
+                                ((Number) r[1]).longValue()
+                        ))
+                        .toList();
+
+        return result;
+    }
 
     public List<MessagesByKey> getMessagesByKey(List<UUID> apiIds){   /// API KEY COUNTERS
         List<Object[]> objs = messageRepository.countByApiIds(apiIds);
