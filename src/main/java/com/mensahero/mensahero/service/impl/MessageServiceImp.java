@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class MessageServiceImp implements MessageService {
+public class MessageServiceImp implements MessageService{
     MessageRepository messageRepository;
 
     public MessageServiceImp(MessageRepository messageRepository) {
@@ -63,6 +63,7 @@ public class MessageServiceImp implements MessageService {
 
     /////////////////////////////////// HELPER FUNCTIONS FOR OTHER SERVICES
 
+    @Override
     public DashboardCount getDashboardCount(List<UUID> apiIds){ /// TOTAL COUNTERS
         MessageCounterProjection counterProjection = messageRepository.getDashboardCounters(apiIds);
         System.out.println("TOTAL MESSAGES: " + counterProjection.getTotalMessages());
@@ -71,6 +72,7 @@ public class MessageServiceImp implements MessageService {
         return new DashboardCount(counterProjection.getTotalMessages(), counterProjection.getFailedMessages());
     }
 
+    @Override
     public List<MessagesOverTime> getMessagesOverTime(List<UUID> apiIds, DateFilters dateFilters){ /// GRAPHS
         List<MessagesOverTime> result =
                 messageRepository.getMessagesOverTime(apiIds, dateFilters.name())
@@ -84,6 +86,7 @@ public class MessageServiceImp implements MessageService {
         return result;
     }
 
+    @Override
     public List<MessagesByKey> getMessagesByKey(List<UUID> apiIds){   /// API KEY COUNTERS
         List<Object[]> objs = messageRepository.countByApiIds(apiIds);
 
@@ -99,6 +102,7 @@ public class MessageServiceImp implements MessageService {
         return list;
     }
 
+    @Override
     public List<Message> getRecentMessages(List<UUID> apiIds){  /// 5 RECENT MESSAGES
         int limit = 5;
 
