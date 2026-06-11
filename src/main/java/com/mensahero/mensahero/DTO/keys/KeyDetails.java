@@ -6,8 +6,17 @@ import java.util.UUID;
 
 public class KeyDetails {
     private UUID ownerId;
+    private UUID keyId;
     private String name;
     private KeyStatus status;
+
+    public UUID getKeyId() {
+        return keyId;
+    }
+
+    public void setKeyId(UUID keyId) {
+        this.keyId = keyId;
+    }
 
     public String getName() {
         return name;
@@ -31,5 +40,15 @@ public class KeyDetails {
 
     public void setStatus(KeyStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "KeyDetails{" +
+                "ownerId=" + ownerId +
+                ", keyId=" + keyId +
+                ", name='" + name + '\'' +
+                ", status='" + status + '\'' +
+                '}';
     }
 }

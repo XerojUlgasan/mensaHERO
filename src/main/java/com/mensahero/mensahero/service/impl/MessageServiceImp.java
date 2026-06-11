@@ -6,14 +6,19 @@ import com.mensahero.mensahero.DTO.dashboard.MessagesOverTime;
 import com.mensahero.mensahero.DTO.messages.CreateMessage;
 import com.mensahero.mensahero.Enums.DateFilters;
 import com.mensahero.mensahero.Enums.MessageStatus;
+import com.mensahero.mensahero.exception.ApiException;
+import com.mensahero.mensahero.model.Key;
 import com.mensahero.mensahero.model.Message;
 import com.mensahero.mensahero.projections.messages.MessageCounterProjection;
+import com.mensahero.mensahero.repository.KeyRepository;
 import com.mensahero.mensahero.repository.MessageRepository;
 import com.mensahero.mensahero.service.MessageService;
+import jakarta.transaction.Transactional;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -26,9 +31,11 @@ import java.util.UUID;
 @Service
 public class MessageServiceImp implements MessageService{
     MessageRepository messageRepository;
+    KeyRepository keyRepository;
 
-    public MessageServiceImp(MessageRepository messageRepository) {
+    public MessageServiceImp(MessageRepository messageRepository, KeyRepository keyRepository) {
         this.messageRepository = messageRepository;
+        this.keyRepository = keyRepository;
     }
 
     @Override
@@ -49,16 +56,21 @@ public class MessageServiceImp implements MessageService{
                                                  MessageStatus messageStatus,
                                                  int page,
                                                  int pageSize) {
+
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
 
         return messageRepository.findByApiIdAndReceiver(apiId, recipient, pageable);
     }
 
     @Override
+    @Transactional
     public Message createMessage(UUID ownerId,
                                  CreateMessage createMessage) {
+        UUID keyId = keyRepository.findByKey(createMessage.getApiKey())
+                .orElseThrow(() -> new ApiException("API KEY DOES NOT EXISTS", HttpStatus.NOT_FOUND))
+                .getId();
 
-        return messageRepository.save(new Message(createMessage.getMessage(), createMessage.getTo(), createMessage.getFrom(), createMessage.getApiKey()));
+        return messageRepository.save(new Message(createMessage.getMessage(), createMessage.getTo(), createMessage.getFrom(), keyId));
     }
 
     /////////////////////////////////// HELPER FUNCTIONS FOR OTHER SERVICES

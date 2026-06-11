@@ -1,10 +1,10 @@
 package com.mensahero.mensahero.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.mensahero.mensahero.Enums.KeyStatus;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.security.SecureRandom;
 import java.time.OffsetDateTime;
@@ -26,8 +26,9 @@ public class Key {
 
     private String key;
 
-    @Column(insertable = false)
-    private String status;
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", columnDefinition = "api_key_status")
+    private KeyStatus status;
 
     @Column(name = "owner_id")
     private UUID ownerId;
@@ -53,6 +54,18 @@ public class Key {
                 .substring(0, 20);
     }
 
+    public static Key createKey(UUID ownerId, String name){
+        Key  key = new Key();
+
+        key.setId(UUID.randomUUID());
+        key.setOwner_id(ownerId);
+        key.setName(name);
+        key.setStatus(KeyStatus.ACTIVE);
+        key.setKey(Key.generateApiKey());
+
+        return key;
+    }
+
     ///
 
     public OffsetDateTime getLast_used() {
@@ -71,11 +84,11 @@ public class Key {
         this.name = name;
     }
 
-    public String getStatus() {
+    public KeyStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(KeyStatus status) {
         this.status = status;
     }
 
@@ -117,6 +130,20 @@ public class Key {
 
     public void setOwner_id(UUID ownerId) {
         this.ownerId = ownerId;
+    }
+
+    @Override
+    public String toString() {
+        return "Key{" +
+                "id=" + id +
+                ", created_at=" + created_at +
+                ", expires_at=" + expires_at +
+                ", key='" + key + '\'' +
+                ", status=" + status +
+                ", ownerId=" + ownerId +
+                ", last_used=" + last_used +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
 

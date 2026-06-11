@@ -3,16 +3,16 @@ package com.mensahero.mensahero.DTO.messages;
 import java.util.UUID;
 
 public class CreateMessage {
-    private UUID apiKey;
+    private String apiKey;
     private String from;
     private String to;
     private String message;
 
-    public UUID getApiKey() {
+    public String getApiKey() {
         return apiKey;
     }
 
-    public void setApiKey(UUID apiKey) {
+    public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
     }
 
