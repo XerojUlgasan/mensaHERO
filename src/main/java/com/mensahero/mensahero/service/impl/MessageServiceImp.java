@@ -53,13 +53,13 @@ public class MessageServiceImp implements MessageService{
                                                  UUID apiId,
                                                  DateFilters dateFilters,
                                                  String recipient,
-                                                 MessageStatus messageStatus,
+                                                 MessageStatus status,
                                                  int page,
                                                  int pageSize) {
 
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("created_at").descending());
 
-        return messageRepository.findByApiIdAndReceiver(apiId, recipient, pageable);
+        return messageRepository.findByApiIdAndReceiverAndStatus(apiId, recipient, status.toString().toLowerCase(), pageable);
     }
 
     @Override

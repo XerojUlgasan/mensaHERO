@@ -2,6 +2,7 @@ package com.mensahero.mensahero.repository;
 
 import com.mensahero.mensahero.DTO.dashboard.DashboardCount;
 import com.mensahero.mensahero.Enums.DateFilters;
+import com.mensahero.mensahero.Enums.MessageStatus;
 import com.mensahero.mensahero.model.Message;
 import com.mensahero.mensahero.projections.messages.MessageCounterProjection;
 import org.springframework.data.domain.Page;
@@ -32,8 +33,19 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
                               @Param("limit") int limit,
                               @Param("offset") int offset);
 
-    List<Message> findByApiIdAndReceiver(@Param("apiId") UUID apiId,
+    @Query(value = """
+        SELECT *
+        FROM public."Messages"
+        WHERE api_id = :apiId
+          AND receiver = :receiver
+          AND (
+                :status = 'all'
+                OR status = :status
+              )
+    """, nativeQuery = true)
+    List<Message> findByApiIdAndReceiverAndStatus(@Param("apiId") UUID apiId,
                                          @Param("receiver") String recipient,
+                                         @Param("status") String status,
                                          Pageable pageable);
 
     ///////////////////////////////////// HELPER FOR OTHER SERVICES

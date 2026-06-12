@@ -5,11 +5,14 @@ import com.mensahero.mensahero.DTO.dashboard.MessagesByKey;
 import com.mensahero.mensahero.DTO.dashboard.MessagesOverTime;
 import com.mensahero.mensahero.DTO.messages.CreateMessage;
 import com.mensahero.mensahero.Enums.DateFilters;
+import com.mensahero.mensahero.Enums.MessageStatus;
 import com.mensahero.mensahero.exception.ApiException;
 import com.mensahero.mensahero.model.Key;
 import com.mensahero.mensahero.model.Message;
 import com.mensahero.mensahero.service.impl.KeyServiceImp;
 import com.mensahero.mensahero.service.impl.MessageServiceImp;
+import jakarta.annotation.Nullable;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -53,9 +56,10 @@ public class MessageController {
     @GetMapping("/retrieveMessagesByRecipient")
     public List<Message> getAllMessages(@RequestParam UUID apiId,
                                         @RequestParam String recipient,
+                                        @RequestParam(defaultValue = "ALL") MessageStatus status,
                                         @RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int pageSize){
 
-        return messageServiceImp.getMessagesByRecipients(null, apiId, null, recipient, null, page, pageSize);
+        return messageServiceImp.getMessagesByRecipients(null, apiId, null, recipient, status, page, pageSize);
     }
 }

@@ -40,7 +40,7 @@ public class DashboardController {
     }
 
     @GetMapping("/graph")
-    public List<MessagesOverTime> getMessagesOvertime(@RequestParam  String dateFilter, Authentication auth) {
+    public List<MessagesOverTime> getMessagesOvertime(@RequestParam  String dateFilter, Authentication auth){
         DateFilters dateFilters = DateFilters.valueOf(dateFilter.toUpperCase()); // UPPER CASE TO MATCH ENUM
         List<UUID> apiIds = keyService.getKeysId((UUID) auth.getPrincipal());
         return dashboardService.getMessagesOvertime(apiIds, dateFilters);

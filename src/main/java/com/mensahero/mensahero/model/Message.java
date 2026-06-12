@@ -1,9 +1,9 @@
 package com.mensahero.mensahero.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.mensahero.mensahero.Enums.MessageStatus;
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class Message {
     private String receiver;
     private String message;
 
-    @Column(insertable = false)
+    @Column(name = "status")
     private String status;
 
     @Column(name = "api_id")
@@ -35,6 +35,7 @@ public class Message {
     }
 
     public Message(String message, String receiver, String sender, UUID apiId) {
+        this.status = "pending";
         this.id = UUID.randomUUID();
         this.message = message;
         this.receiver = receiver;
